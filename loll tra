@@ -1,0 +1,145 @@
+# Import the necessary assemblies
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+# Loo peamine vorm
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "System Utilities"
+$form.Size = New-Object System.Drawing.Size(400, 300)
+$form.StartPosition = "CenterScreen"
+
+# Loo tab control
+$tabControl = New-Object System.Windows.Forms.TabControl
+$tabControl.Dock = "Fill"
+$tabControl.TabPages.Clear()
+
+# Loo leheküljed
+$killTaskPage = New-Object System.Windows.Forms.TabPage
+$killTaskPage.Text = "Kill Tasks"
+
+$appDownloadPage = New-Object System.Windows.Forms.TabPage
+$appDownloadPage.Text = "Download Apps"
+
+$shutdownPage = New-Object System.Windows.Forms.TabPage
+$shutdownPage.Text = "Shutdown PC"
+
+# Lisa leheküljed tab control-i
+$tabControl.TabPages.Add($killTaskPage)
+$tabControl.TabPages.Add($appDownloadPage)
+$tabControl.TabPages.Add($shutdownPage)
+
+# Loo kontrollid kill tasks leheküljel
+$killTaskLabel = New-Object System.Windows.Forms.Label
+$killTaskLabel.Text = "Enter task name or PID:"
+$killTaskLabel.Location = New-Object System.Drawing.Point(10, 20)
+$killTaskLabel.Size = New-Object System.Drawing.Size(150, 20)
+
+$killTaskTextBox = New-Object System.Windows.Forms.TextBox
+$killTaskTextBox.Location = New-Object System.Drawing.Point(10, 40)
+$killTaskTextBox.Size = New-Object System.Drawing.Size(200, 20)
+
+$killTaskButton = New-Object System.Windows.Forms.Button
+$killTaskButton.Text = "Kill Task"
+$killTaskButton.Location = New-Object System.Drawing.Point(10, 70)
+$killTaskButton.Size = New-Object System.Drawing.Size(100, 30)
+$killTaskButton.Add_Click({
+    $taskName = $killTaskTextBox.Text
+    if ($taskName) {
+        try {
+            Get-Process -Name $taskName -ErrorAction Stop | Stop-Process -Force
+            [System.Windows.Forms.MessageBox]::Show("Task '$taskName' killed successfully.", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+        } catch {
+            [System.Windows.Forms.MessageBox]::Show("Failed to kill task '$taskName'. Error: $_", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+        }
+        $killTaskTextBox.Text = ""
+    }
+})
+
+# Lisa kontrollid kill tasks leheküljel
+$killTaskPage.Controls.Add($killTaskLabel)
+$killTaskPage.Controls.Add($killTaskTextBox)
+$killTaskPage.Controls.Add($killTaskButton)
+
+# Loo kontrollid rakenduste allalaadimise leheküljel
+$appLabel = New-Object System.Windows.Forms.Label
+$appLabel.Text = "Select applications to download:"
+$appLabel.Location = New-Object System.Drawing.Point(10, 20)
+$appLabel.Size = New-Object System.Drawing.Size(200, 20)
+
+$checkboxSpotify = New-Object System.Windows.Forms.CheckBox
+$checkboxSpotify.Text = "Spotify"
+$checkboxSpotify.Location = New-Object System.Drawing.Point(10, 50)
+$checkboxSpotify.Size = New-Object System.Drawing.Size(150, 20)
+
+$checkboxDiscord = New-Object System.Windows.Forms.CheckBox
+$checkboxDiscord.Text = "Discord"
+$checkboxDiscord.Location = New-Object System.Drawing.Point(10, 80)
+$checkboxDiscord.Size = New-Object System.Drawing.Size(150, 20)
+
+$checkboxSteam = New-Object System.Windows.Forms.CheckBox
+$checkboxSteam.Text = "Steam"
+$checkboxSteam.Location = New-Object System.Drawing.Point(10, 110)
+$checkboxSteam.Size = New-Object System.Drawing.Size(150, 20)
+
+$checkboxChrome = New-Object System.Windows.Forms.CheckBox
+$checkboxChrome.Text = "Chrome"
+$checkboxChrome.Location = New-Object System.Drawing.Point(10, 140)
+$checkboxChrome.Size = New-Object System.Drawing.Size(150, 20)
+
+$checkboxTeamspeak = New-Object System.Windows.Forms.CheckBox
+$checkboxTeamspeak.Text = "TeamSpeak"
+$checkboxTeamspeak.Location = New-Object System.Drawing.Point(10, 170)
+$checkboxTeamspeak.Size = New-Object System.Drawing.Size(150, 20)
+
+$downloadButton = New-Object System.Windows.Forms.Button
+$downloadButton.Text = "Download Selected"
+$downloadButton.Location = New-Object System.Drawing.Point(10, 200)
+$downloadButton.Size = New-Object System.Drawing.Size(150, 30)
+$downloadButton.Add_Click({
+    if ($checkboxSpotify.Checked) {
+        Start-Process -FilePath "https://download.scdn.co/SpotifySetup.exe"
+    }
+    if ($checkboxDiscord.Checked) {
+        Start-Process -FilePath "https://discord.com/api/download?platform=win"
+    }
+    if ($checkboxSteam.Checked) {
+        Start-Process -FilePath "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
+    }
+    if ($checkboxChrome.Checked) {
+        Start-Process -FilePath "https://dl.google.com/chrome/install/latest/chrome_installer.exe"
+    }
+    if ($checkboxTeamspeak.Checked) {
+        Start-Process -FilePath "https://files.teamspeak-services.com/releases/client/3.5.6/TeamSpeak3-Client-win64-3.5.6.exe"
+    }
+    [System.Windows.Forms.MessageBox]::Show("Selected applications are being downloaded.", "Download", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+})
+
+# Lisa kontrollid rakenduste allalaadimise leheküljel
+$appDownloadPage.Controls.Add($appLabel)
+$appDownloadPage.Controls.Add($checkboxSpotify)
+$appDownloadPage.Controls.Add($checkboxDiscord)
+$appDownloadPage.Controls.Add($checkboxSteam)
+$appDownloadPage.Controls.Add($checkboxChrome)
+$appDownloadPage.Controls.Add($checkboxTeamspeak)
+$appDownloadPage.Controls.Add($downloadButton)
+
+# Loo kontrollid shutdown leheküljel
+$shutdownButton = New-Object System.Windows.Forms.Button
+$shutdownButton.Text = "Shutdown PC"
+$shutdownButton.Location = New-Object System.Drawing.Point(10, 20)
+$shutdownButton.Size = New-Object System.Drawing.Size(100, 30)
+$shutdownButton.Add_Click({
+    if ([System.Windows.Forms.MessageBox]::Show("Are you sure you want to shut down the PC?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Warning) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        Stop-Computer -Force
+    }
+})
+
+# Lisa kontrollid shutdown leheküljel
+$shutdownPage.Controls.Add($shutdownButton)
+
+# Lisa tab control vormile
+$form.Controls.Add($tabControl)
+
+# Näita vormi
+$form.Add_Shown({ $form.Activate() })
+$form.ShowDialog() | Out-Null
