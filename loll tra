@@ -1,37 +1,78 @@
-# Import the necessary assemblies
+# Vajalike koostude importimine
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
+Add-Type -AssemblyName System.ServiceProcess
 
-# Loo peamine vorm
+# Põhivormi loomine
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "Mingi toolbox"
-$form.Size = New-Object System.Drawing.Size(400, 300)
+$form.Text = "toolbox v mdgi"
+$form.Size = New-Object System.Drawing.Size(400, 600)  # Muudetud vormi kõrgus
 $form.StartPosition = "CenterScreen"
-$form.BackColor = [System.Drawing.Color]::LightBlue  # Tausta värv sinine
+$form.BackColor = [System.Drawing.Color]::LightBlue
 
-# Loo tab control
+# Teeb Tab Kontrolli
 $tabControl = New-Object System.Windows.Forms.TabControl
 $tabControl.Dock = "Fill"
 $tabControl.TabPages.Clear()
 
-# Loo leheküljed
+# Teep leheküljed
 $killTaskPage = New-Object System.Windows.Forms.TabPage
 $killTaskPage.Text = "Taskide mõrv"
 
 $appDownloadPage = New-Object System.Windows.Forms.TabPage
-$appDownloadPage.Text = "Tõmmata äppid"
+$appDownloadPage.Text = "Appide tõmbamine"
 
 $shutdownPage = New-Object System.Windows.Forms.TabPage
-$shutdownPage.Text = "Erinevad Valikud"  # Muudetud lehekülje nimi
+$shutdownPage.Text = "nupud"
 
-# Lisa leheküljed tab control-i
+$servicePage = New-Object System.Windows.Forms.TabPage  # Uus lehekülg teenuste jaoks
+$servicePage.Text = "Teenuse Staatus"  
+
+# Lisab leheküljed tab controlli
 $tabControl.TabPages.Add($killTaskPage)
 $tabControl.TabPages.Add($appDownloadPage)
 $tabControl.TabPages.Add($shutdownPage)
+$tabControl.TabPages.Add($servicePage)  # Lisa teenuste lehekülg
 
-# Loo kontrollid kill tasks leheküljel
+# teeb kontrollid service tab-i
+$serviceLabel = New-Object System.Windows.Forms.Label
+$serviceLabel.Text = "Valige Teenus:"
+$serviceLabel.Location = New-Object System.Drawing.Point(10, 20)
+$serviceLabel.Size = New-Object System.Drawing.Size(200, 20)
+
+$serviceComboBox = New-Object System.Windows.Forms.ComboBox
+$serviceComboBox.Location = New-Object System.Drawing.Point(10, 50)
+$serviceComboBox.Size = New-Object System.Drawing.Size(200, 20)
+
+# saab teenuste listi
+$services = Get-Service | Select-Object -ExpandProperty Name
+$serviceComboBox.Items.AddRange($services)
+
+$statusLabel = New-Object System.Windows.Forms.Label
+$statusLabel.Text = "Status:"
+$statusLabel.Location = New-Object System.Drawing.Point(10, 80)
+$statusLabel.Size = New-Object System.Drawing.Size(100, 20)
+
+$statusValueLabel = New-Object System.Windows.Forms.Label
+$statusValueLabel.Location = New-Object System.Drawing.Point(120, 80)
+$statusValueLabel.Size = New-Object System.Drawing.Size(100, 20)
+
+# lisab kontrollid teenuste leheküljele
+$servicePage.Controls.Add($serviceLabel)
+$servicePage.Controls.Add($serviceComboBox)
+$servicePage.Controls.Add($statusLabel)
+$servicePage.Controls.Add($statusValueLabel)
+
+# Lisa sündmuse käsitseja teenuse valiku jaoks
+$serviceComboBox.Add_SelectedIndexChanged({
+    $selectedService = $serviceComboBox.SelectedItem
+    $serviceStatus = (Get-Service -Name $selectedService).Status
+    $statusValueLabel.Text = $serviceStatus
+})
+
+# Looge juhtimispunktid tapmisülesannete lehele...
 $killTaskLabel = New-Object System.Windows.Forms.Label
-$killTaskLabel.Text = "valige taski nimi või PID:"
+$killTaskLabel.Text = "sisesta taski nimi või PID:"
 $killTaskLabel.Location = New-Object System.Drawing.Point(10, 20)
 $killTaskLabel.Size = New-Object System.Drawing.Size(150, 20)
 
@@ -40,7 +81,7 @@ $killTaskTextBox.Location = New-Object System.Drawing.Point(10, 40)
 $killTaskTextBox.Size = New-Object System.Drawing.Size(200, 20)
 
 $killTaskButton = New-Object System.Windows.Forms.Button
-$killTaskButton.Text = "Kill Task"
+$killTaskButton.Text = "Task mõrvv"
 $killTaskButton.Location = New-Object System.Drawing.Point(10, 70)
 $killTaskButton.Size = New-Object System.Drawing.Size(100, 30)
 $killTaskButton.Add_Click({
@@ -56,14 +97,14 @@ $killTaskButton.Add_Click({
     }
 })
 
-# Lisa kontrollid kill tasks leheküljel
+# Kontrollide lisamine tapmisülesannete lehele
 $killTaskPage.Controls.Add($killTaskLabel)
 $killTaskPage.Controls.Add($killTaskTextBox)
 $killTaskPage.Controls.Add($killTaskButton)
 
-# Loo kontrollid rakenduste allalaadimise leheküljel
+# Looge rakenduse allalaadimislehe kontrolli...
 $appLabel = New-Object System.Windows.Forms.Label
-$appLabel.Text = "Vali mida tõmmata:"
+$appLabel.Text = "Vali Rakendused:"
 $appLabel.Location = New-Object System.Drawing.Point(10, 20)
 $appLabel.Size = New-Object System.Drawing.Size(200, 20)
 
@@ -93,7 +134,7 @@ $checkboxTeamspeak.Location = New-Object System.Drawing.Point(10, 170)
 $checkboxTeamspeak.Size = New-Object System.Drawing.Size(150, 20)
 
 $downloadButton = New-Object System.Windows.Forms.Button
-$downloadButton.Text = "tõmba valitud"
+$downloadButton.Text = "Tõmba valitud"
 $downloadButton.Location = New-Object System.Drawing.Point(10, 200)
 $downloadButton.Size = New-Object System.Drawing.Size(150, 30)
 $downloadButton.Add_Click({
@@ -112,10 +153,10 @@ $downloadButton.Add_Click({
     if ($checkboxTeamspeak.Checked) {
         Start-Process -FilePath "https://files.teamspeak-services.com/releases/client/3.5.6/TeamSpeak3-Client-win64-3.5.6.exe"
     }
-    [System.Windows.Forms.MessageBox]::Show("valitud äppid tõmmatakse.", "Download", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+    [System.Windows.Forms.MessageBox]::Show("Selected applications are being downloaded.", "Download", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
 })
 
-# Lisa kontrollid rakenduste allalaadimise leheküljel
+# Lisage rakenduse allalaadimislehele juhtnööre
 $appDownloadPage.Controls.Add($appLabel)
 $appDownloadPage.Controls.Add($checkboxSpotify)
 $appDownloadPage.Controls.Add($checkboxDiscord)
@@ -124,9 +165,9 @@ $appDownloadPage.Controls.Add($checkboxChrome)
 $appDownloadPage.Controls.Add($checkboxTeamspeak)
 $appDownloadPage.Controls.Add($downloadButton)
 
-# Loo kontrollid shutdown leheküljel
+# Looge juhtimisseadmed väljalülitusvalikute lehele
 $shutdownLabel = New-Object System.Windows.Forms.Label
-$shutdownLabel.Text = "Vali oma Valik:"
+$shutdownLabel.Text = "Vali üks:"
 $shutdownLabel.Location = New-Object System.Drawing.Point(10, 20)
 $shutdownLabel.Size = New-Object System.Drawing.Size(200, 20)
 
@@ -135,7 +176,7 @@ $rebootButton.Text = "Reboot"
 $rebootButton.Location = New-Object System.Drawing.Point(10, 50)
 $rebootButton.Size = New-Object System.Drawing.Size(100, 30)
 $rebootButton.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Kas olete kindel?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Warning) -eq [System.Windows.Forms.DialogResult]::Yes) {
+    if ([System.Windows.Forms.MessageBox]::Show("Are you sure you want to reboot the PC?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Warning) -eq [System.Windows.Forms.DialogResult]::Yes) {
         Restart-Computer -Force
     }
 })
@@ -145,13 +186,13 @@ $logOutButton.Text = "Log Out"
 $logOutButton.Location = New-Object System.Drawing.Point(10, 90)
 $logOutButton.Size = New-Object System.Drawing.Size(100, 30)
 $logOutButton.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Warning) -eq [System.Windows.Forms.DialogResult]::Yes) {
+    if ([System.Windows.Forms.MessageBox]::Show("Are you sure you want to log out?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Warning) -eq [System.Windows.Forms.DialogResult]::Yes) {
         shutdown.exe /l /f
     }
 })
 
 $emptyRecycleBinButton = New-Object System.Windows.Forms.Button
-$emptyRecycleBinButton.Text = "Tühjenda prügi"
+$emptyRecycleBinButton.Text = "Tühjenda Prügi"
 $emptyRecycleBinButton.Location = New-Object System.Drawing.Point(10, 130)
 $emptyRecycleBinButton.Size = New-Object System.Drawing.Size(150, 30)
 $emptyRecycleBinButton.Add_Click({
@@ -167,17 +208,17 @@ $sleepButton.Add_Click({
     [System.Windows.Forms.Application]::SetSuspendState([System.Windows.Forms.PowerState]::Suspend, $false, $true)
 })
 
-# Lisa kontrollid shutdown leheküljel
+# Lisage juhtnupud väljalülitamisvalikute lehele
 $shutdownPage.Controls.Add($shutdownLabel)
 $shutdownPage.Controls.Add($rebootButton)
 $shutdownPage.Controls.Add($logOutButton)
 $shutdownPage.Controls.Add($emptyRecycleBinButton)
 $shutdownPage.Controls.Add($sleepButton)
 
-# Lisa tab control vormile
+
+# Lisab vormile vahekaart
 $form.Controls.Add($tabControl)
 
 # Näita vormi
 $form.Add_Shown({ $form.Activate() })
 $form.ShowDialog() | Out-Null
-
