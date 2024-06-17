@@ -155,15 +155,6 @@ $downloadButton.Add_Click({
     [System.Windows.Forms.MessageBox]::Show("valitud rakendused tõmmatakse.", "Download", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
 })
 
-# Add controls to the app download page
-$appDownloadPage.Controls.Add($appLabel)
-$appDownloadPage.Controls.Add($checkboxSpotify)
-$appDownloadPage.Controls.Add($checkboxDiscord)
-$appDownloadPage.Controls.Add($checkboxSteam)
-$appDownloadPage.Controls.Add($checkboxChrome)
-$appDownloadPage.Controls.Add($checkboxTeamspeak)
-$appDownloadPage.Controls.Add($downloadButton)
-
 # Lisa juhtelemendid rakenduste allalaadimise lehele
 $appiAllalaadimineLeht.Controls.Add($rakendusteSilt)
 $appiAllalaadimineLeht.Controls.Add($spotifyKastike)
@@ -171,7 +162,7 @@ $appiAllalaadimineLeht.Controls.Add($checkboxDiscord)
 $appiAllalaadimineLeht.Controls.Add($checkboxSteam)
 $appiAllalaadimineLeht.Controls.Add($checkboxChrome)
 $appiAllalaadimineLeht.Controls.Add($checkboxTeamspeak)
-$appiAllalaadimineLeht.Controls.Add($allalaadimiseNupp)
+$appiAllalaadimineLeht.Controls.Add($downloadButton)
 
 # Loo juhtelemendid väljalülitamise valikute lehele
 $lülitaSilt = New-Object System.Windows.Forms.Label
@@ -266,6 +257,16 @@ $tahvelarvutiUuendusedNupp.Add_Click({
         Stop-Computer -Force
     }
 })
+$hibernateButton = New-Object System.Windows.Forms.Button
+$hibernateButton.Text = "Hibernate"
+$hibernateButton.Location = New-Object System.Drawing.Point(10, 250)
+$hibernateButton.Size = New-Object System.Drawing.Size(100, 30)
+$hibernateButton.BackColor = [System.Drawing.Color]::LightGray
+$hibernateButton.Add_Click({
+    Add-Type -AssemblyName System.Windows.Forms
+    [System.Windows.Forms.Application]::SetSuspendState([System.Windows.Forms.PowerState]::Hibernate, $false, $true)
+})
+
 
 # Lisa juhtelemendid väljalülitamise valikute leheküljele
 $lülitaLeht.Controls.Add($lülitaSilt)
@@ -277,21 +278,19 @@ $lülitaLeht.Controls.Add($tühjendaPrügiNupp)
 $lülitaLeht.Controls.Add($logiVäljaNupp)
 $lülitaLeht.Controls.Add($taaskäivitaNupp)
 $lülitaLeht.Controls.Add($taimestaNupp)
+$lülitaLeht.Controls.Add($hibernateButton)
 
 # Lisa sakikontroll vormile
 $vorm.Controls.Add($sakkJuhtimine)
 
-# Loo tekstikast, kuhu väljund kuvatakse
-$väljundiKast = New-Object System.Windows.Forms.TextBox
-$väljundiKast.Multiline = $true
-$väljundiKast.ReadOnly = $true
-$väljundiKast.ScrollBars = 'Vertical'
-$väljundiKast.Size = New-Object System.Drawing.Size(580, 400)
-$väljundiKast.Location = New-Object System.Drawing.Point(10, 10)
-$cliLeht.Controls.Add($väljundiKast)
-
 # Loo CLI lehele käsu täitmise funktsioon
 $cliLeht.Controls.Add($väljundiKast)
+$cliLeht.Controls.Add($sisendiKast)
+
+# Loo tekstikast, kuhu sisend sisestatakse
+$sisendiKast = New-Object System.Windows.Forms.TextBox
+$sisendiKast.Size = New-Object System.Drawing.Size(580, 20)
+$sisendiKast.Location = New-Object System.Drawing.Point(10, 420)
 $cliLeht.Controls.Add($sisendiKast)
 
 # Funktsioon, mis võimaldab käskude täitmist
@@ -299,21 +298,45 @@ function Execute-Command {
     param (
         [string]$käsk
     )
-
+    }
     # Check if the command is not empty
     if (-not [string]::IsNullOrEmpty($käsk)) {
         # Käsk käivitub
         $väljund = Invoke-Expression $käsk 2>&1
 
         # Uuendab väljundit
-        
+        $väljundiKast.AppendText("PS> $käsk`n")
         $väljundiKast.AppendText("$väljund`n")
         $väljundiKast.ScrollToCaret()
 
         # Tühjendab sisendi kasti pärast Enteri vajutamist
         $sisendiKast.Text = ''
     }
-}
+
+# Tekstisisestuskasti lisamine käsul, mis käivitub Enteri vajutamisel
+$sisendiKast.Add_KeyDown({
+    param (
+        [System.Object]$saatja,
+        [System.Windows.Forms.KeyEventArgs]$e
+    )
+
+    if ($e.KeyCode -eq [System.Windows.Forms.Keys]::Enter) {
+        Execute-Command -käsk $sisendiKast.Text
+        $e.SuppressKeyPress = $true
+    }
+})
+
+$käsuNupp = New-Object System.Windows.Forms.Button
+$käsuNupp.Text = "Sisesta käsk"
+$käsuNupp.Location = New-Object System.Drawing.Point(10, 450)
+$käsuNupp.Size = New-Object System.Drawing.Size(100, 30)
+$käsuNupp.BackColor = [System.Drawing.Color]::LightGray
+$käsuNupp.Add_Click({
+    Execute-Command -käsk $sisendiKast.Text
+    $sisendiKast.Text = ''
+})
+$cliLeht.Controls.Add($käsuNupp)
+
 # Näitab vormi
 $vorm.Add_Shown({ $vorm.Activate() })
 $vorm.ShowDialog() | Out-Null
