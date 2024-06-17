@@ -8,7 +8,7 @@ $form = New-Object System.Windows.Forms.Form
 $form.Text = "toolbox v mdgi"
 $form.Size = New-Object System.Drawing.Size(400, 600)  # Muudetud vormi kõrgus
 $form.StartPosition = "CenterScreen"
-$form.BackColor = [System.Drawing.Color]::LightBlue
+$form.BackColor = "#23e9e2"
 
 # Teeb Tab Kontrolli
 $tabControl = New-Object System.Windows.Forms.TabControl
@@ -18,12 +18,15 @@ $tabControl.TabPages.Clear()
 # Teep leheküljed
 $killTaskPage = New-Object System.Windows.Forms.TabPage
 $killTaskPage.Text = "Taskide mõrv"
+$killTaskPage.BackColor="#23e9e2"
 
 $appDownloadPage = New-Object System.Windows.Forms.TabPage
 $appDownloadPage.Text = "Appide tõmbamine"
+$appDownloadPage.BackColor="#44a102"
 
 $shutdownPage = New-Object System.Windows.Forms.TabPage
 $shutdownPage.Text = "nupud"
+$shutdownPage.BackColor="#dc03bb"
 
 $servicePage = New-Object System.Windows.Forms.TabPage  # Uus lehekülg teenuste jaoks
 $servicePage.Text = "Teenuse Staatus"  
@@ -84,6 +87,7 @@ $killTaskButton = New-Object System.Windows.Forms.Button
 $killTaskButton.Text = "Task mõrvv"
 $killTaskButton.Location = New-Object System.Drawing.Point(10, 70)
 $killTaskButton.Size = New-Object System.Drawing.Size(100, 30)
+$killTaskButton.BackColor="#bebebe"
 $killTaskButton.Add_Click({
     $taskName = $killTaskTextBox.Text
     if ($taskName) {
@@ -137,6 +141,7 @@ $downloadButton = New-Object System.Windows.Forms.Button
 $downloadButton.Text = "Tõmba valitud"
 $downloadButton.Location = New-Object System.Drawing.Point(10, 200)
 $downloadButton.Size = New-Object System.Drawing.Size(150, 30)
+$downloadButton.BackColor="#bebebe"
 $downloadButton.Add_Click({
     if ($checkboxSpotify.Checked) {
         Start-Process -FilePath "https://download.scdn.co/SpotifySetup.exe"
@@ -175,6 +180,7 @@ $rebootButton = New-Object System.Windows.Forms.Button
 $rebootButton.Text = "Reboot"
 $rebootButton.Location = New-Object System.Drawing.Point(10, 50)
 $rebootButton.Size = New-Object System.Drawing.Size(100, 30)
+$rebootButton.BackColor="#bebebe"
 $rebootButton.Add_Click({
     if ([System.Windows.Forms.MessageBox]::Show("Are you sure you want to reboot the PC?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Warning) -eq [System.Windows.Forms.DialogResult]::Yes) {
         Restart-Computer -Force
@@ -185,6 +191,7 @@ $logOutButton = New-Object System.Windows.Forms.Button
 $logOutButton.Text = "Log Out"
 $logOutButton.Location = New-Object System.Drawing.Point(10, 90)
 $logOutButton.Size = New-Object System.Drawing.Size(100, 30)
+$logOutButton.BackColor="#bebebe"
 $logOutButton.Add_Click({
     if ([System.Windows.Forms.MessageBox]::Show("Are you sure you want to log out?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Warning) -eq [System.Windows.Forms.DialogResult]::Yes) {
         shutdown.exe /l /f
@@ -195,14 +202,15 @@ $emptyRecycleBinButton = New-Object System.Windows.Forms.Button
 $emptyRecycleBinButton.Text = "Tühjenda Prügi"
 $emptyRecycleBinButton.Location = New-Object System.Drawing.Point(10, 130)
 $emptyRecycleBinButton.Size = New-Object System.Drawing.Size(150, 30)
+$emptyRecycleBinButton.BackColor="#bebebe"
 $emptyRecycleBinButton.Add_Click({
     Clear-RecycleBin -Force
 })
-
 $sleepButton = New-Object System.Windows.Forms.Button
 $sleepButton.Text = "Sleep"
 $sleepButton.Location = New-Object System.Drawing.Point(10, 170)
 $sleepButton.Size = New-Object System.Drawing.Size(100, 30)
+$sleepButton.BackColor="#bebebe"
 $sleepButton.Add_Click({
     Add-Type -AssemblyName System.Windows.Forms
     [System.Windows.Forms.Application]::SetSuspendState([System.Windows.Forms.PowerState]::Suspend, $false, $true)
