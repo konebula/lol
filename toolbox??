@@ -5,7 +5,7 @@ Add-Type -AssemblyName System.ServiceProcess
 
 # Loo põhivorm
 $vorm = New-Object System.Windows.Forms.Form
-$vorm.Text = "mingi toolbox tra"
+$vorm.Text = "toolbox v mdgi???"
 $vorm.Size = New-Object System.Drawing.Size(700, 600)  
 $vorm.StartPosition = "CenterScreen"
 $vorm.BackColor = [System.Drawing.Color]::WhiteSmoke
@@ -290,10 +290,8 @@ $väljundiKast.Size = New-Object System.Drawing.Size(580, 400)
 $väljundiKast.Location = New-Object System.Drawing.Point(10, 10)
 $cliLeht.Controls.Add($väljundiKast)
 
-# Loo tekstikast, kuhu sisend sisestatakse
-$sisendiKast = New-Object System.Windows.Forms.TextBox
-$sisendiKast.Size = New-Object System.Drawing.Size(580, 20)
-$sisendiKast.Location = New-Object System.Drawing.Point(10, 420)
+# Loo CLI lehele käsu täitmise funktsioon
+$cliLeht.Controls.Add($väljundiKast)
 $cliLeht.Controls.Add($sisendiKast)
 
 # Funktsioon, mis võimaldab käskude täitmist
@@ -302,31 +300,20 @@ function Execute-Command {
         [string]$käsk
     )
 
-    # Käsk käivitub
-    $väljund = Invoke-Expression $käsk 2>&1
+    # Check if the command is not empty
+    if (-not [string]::IsNullOrEmpty($käsk)) {
+        # Käsk käivitub
+        $väljund = Invoke-Expression $käsk 2>&1
 
-    # Uuendab väljundit
-    $väljundiKast.AppendText("PS> $käsk`n")
-    $väljundiKast.AppendText("$väljund`n")
-    $väljundiKast.ScrollToCaret()
+        # Uuendab väljundit
+        
+        $väljundiKast.AppendText("$väljund`n")
+        $väljundiKast.ScrollToCaret()
 
-    # Tühjendab sisendi kasti pärast Enteri vajutamist
-    $sisendiKast.Text = ''
-}
-
-# Tekstisisestuskasti lisamine käsul, mis käivitub Enteri vajutamisel
-$sisendiKast.Add_KeyDown({
-    param (
-        [System.Object]$saatja,
-        [System.Windows.Forms.KeyEventArgs]$e
-    )
-
-    if ($e.KeyCode -eq [System.Windows.Forms.Keys]::Enter) {
-        Execute-Command -käsk $sisendiKast.Text
-        $e.SuppressKeyPress = $true
+        # Tühjendab sisendi kasti pärast Enteri vajutamist
+        $sisendiKast.Text = ''
     }
-})
-
+}
 # Näitab vormi
 $vorm.Add_Shown({ $vorm.Activate() })
 $vorm.ShowDialog() | Out-Null
