@@ -187,8 +187,8 @@ $taaskäivitaNupp.Location = New-Object System.Drawing.Point(10, 90)
 $taaskäivitaNupp.Size = New-Object System.Drawing.Size(100, 30)
 $taaskäivitaNupp.BackColor = [System.Drawing.Color]::LightGray
 $taaskäivitaNupp.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja lülitada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
-        Stop-Computer -Force
+    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti taaskäivitus?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        Restart-Computer -Force
     }
 })
 
@@ -198,8 +198,8 @@ $logiVäljaNupp.Location = New-Object System.Drawing.Point(10, 130)
 $logiVäljaNupp.Size = New-Object System.Drawing.Size(100, 30)
 $logiVäljaNupp.BackColor = [System.Drawing.Color]::LightGray
 $logiväljaNupp.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja lülitada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
-        Stop-Computer -Force
+    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja logida välja?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        shutdown.exe /l /f
     }
 })
 
@@ -209,8 +209,8 @@ $tühjendaPrügiNupp.Location = New-Object System.Drawing.Point(10, 170)
 $tühjendaPrügiNupp.Size = New-Object System.Drawing.Size(150, 30)
 $tühjendaPrügiNupp.BackColor = [System.Drawing.Color]::LightGray
 $tühjendaPrügiNupp.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja lülitada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
-        Stop-Computer -Force
+    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti prügi tühjendada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        Clear-RecycleBin -Force
     }
 })
 
@@ -220,8 +220,8 @@ $magaNupp.Location = New-Object System.Drawing.Point(10, 210)
 $magaNupp.Size = New-Object System.Drawing.Size(100, 30)
 $magaNupp.BackColor = [System.Drawing.Color]::LightGray
 $magaNupp.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja lülitada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
-        Stop-Computer -Force
+    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti uinuma panna?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        Start-Process "rundll32.exe" -ArgumentList "powrprof.dll,SetSuspendState 0,1,0"
     }
 })
 
@@ -231,19 +231,18 @@ $taimestaNupp.Location = New-Object System.Drawing.Point(10, 250)
 $taimestaNupp.Size = New-Object System.Drawing.Size(100, 30)
 $taimestaNupp.BackColor = [System.Drawing.Color]::LightGray
 $taimestaNupp.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja lülitada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
-        Stop-Computer -Force
+    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti hiberneerima panna?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        Start-Process "rundll32.exe" -ArgumentList "powrprof.dll,SetSuspendState Hibernate"
     }
 })
-
 $lukustaNupp = New-Object System.Windows.Forms.Button
 $lukustaNupp.Text = "Lukusta"
 $lukustaNupp.Location = New-Object System.Drawing.Point(10, 290)
 $lukustaNupp.Size = New-Object System.Drawing.Size(100, 30)
 $lukustaNupp.BackColor = [System.Drawing.Color]::LightGray
 $lukustaNupp.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja lülitada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
-        Stop-Computer -Force
+    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti lukustada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        Start-Process "rundll32.exe" -ArgumentList "user32.dll,LockWorkStation"
     }
 })
 
@@ -253,8 +252,8 @@ $tahvelarvutiUuendusedNupp.Location = New-Object System.Drawing.Point(10, 330)
 $tahvelarvutiUuendusedNupp.Size = New-Object System.Drawing.Size(150, 30)
 $tahvelarvutiUuendusedNupp.BackColor = [System.Drawing.Color]::LightGray
 $tahvelarvutiUuendusedNupp.Add_Click({
-    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite arvuti välja lülitada?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
-        Stop-Computer -Force
+    if ([System.Windows.Forms.MessageBox]::Show("Olete kindel, et soovite kontrollida uuendusi?", "Küsimus", [System.Windows.Forms.MessageBoxButtons]::YesNo, [System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes) {
+        Start-Process "powershell.exe" -ArgumentList "-Command Get-WindowsUpdate"
     }
 })
 $hibernateButton = New-Object System.Windows.Forms.Button
