@@ -58,6 +58,27 @@ $taskKillerNupp.Text = "Task Killer"
 $taskKillerNupp.Location = New-Object System.Drawing.Point(10, 70)
 $taskKillerNupp.Size = New-Object System.Drawing.Size(100, 30)
 $taskKillerNupp.BackColor = [System.Drawing.Color]::LightGray
+# Loo sündmuse käitleja nupule
+$taskKillerNupp.Add_Click({
+    $sisestus = $taskKillerTekstiKast.Text
+    if ($null -ne $sisestus -and $sisestus -match '^\d+$') {
+        try {
+            Stop-Process -Id $sisestus -ErrorAction Stop
+            [System.Windows.Forms.MessageBox]::Show("Protsess (PID: $sisestus) lõpetatud edukalt.")
+        } catch {
+            [System.Windows.Forms.MessageBox]::Show("Protsessi lõpetamine ebaõnnestus: $_")
+        }
+    } elseif ($null -ne $sisestus -and $sisestus -ne "") {
+        try {
+            Stop-Process -Name $sisestus -ErrorAction Stop
+            [System.Windows.Forms.MessageBox]::Show("Protsess (Nimi: $sisestus) lõpetatud edukalt.")
+        } catch {
+            [System.Windows.Forms.MessageBox]::Show("Protsessi lõpetamine ebaõnnestus: $_")
+        }
+    } else {
+        [System.Windows.Forms.MessageBox]::Show("Palun sisestage kehtiv taski nimi või PID.")
+    }
+})
 
 # Loo juhtelemendid Task Killer lehele
 $taskKillerLeht.Controls.Add($taskKillerSilt)
